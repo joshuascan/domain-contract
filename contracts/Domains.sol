@@ -10,6 +10,8 @@ contract Domains {
 
   mapping(string => string) public records;
 
+  mapping(string => string) public emails;
+
   constructor() {
     console.log("This is my domains contract");
   }
@@ -31,5 +33,14 @@ contract Domains {
 
   function getRecord(string calldata name) public view returns(string memory) {
     return records[name];
+  }
+
+  function setEmailAddress(string calldata name, string calldata email) public {
+    require(domains[name] == msg.sender);
+    emails[name] = email;
+  }
+
+  function getEmail(string calldata name) public view returns(string memory) {
+    return emails[name];
   }
 }
