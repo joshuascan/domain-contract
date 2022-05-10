@@ -1,7 +1,7 @@
 const main = async () => {
   const domainContractFactory = await hre.ethers.getContractFactory("Domains");
   const domainContract = await domainContractFactory.deploy();
-  await domainContract.deploy();
+  await domainContract.deployed();
   console.log("Contract deployed to:", domainContract.address);
 };
 
