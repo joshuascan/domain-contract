@@ -31,11 +31,11 @@ contract Domains is ERC721URIStorage {
     uint len = StringUtils.strlen(name);
     require(len > 0);
     if (len == 3) {
-      return 5 * 10**17;
+      return 5 * 10**16;
     } else if (len == 4) {
-      return 3 * 10**17;
+      return 3 * 10**16;
     } else {
-      return 1 * 10**17;
+      return 1 * 10**16;
     }
   }
 
@@ -68,7 +68,7 @@ contract Domains is ERC721URIStorage {
     string memory finalTokenUri = string(abi.encodePacked("data:application/json;base64,", json));
 
     console.log("\n---------------------------------------------------");
-    console.log("Final tokenURI", finalTokenUri);
+    console.log("Final tokenURI\n", finalTokenUri);
     console.log("---------------------------------------------------\n");
 
     _safeMint(msg.sender, newRecordId);

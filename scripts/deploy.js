@@ -9,9 +9,17 @@ const main = async () => {
     value: hre.ethers.utils.parseEther("0.01"),
   });
   await txn.wait();
+  console.log("Minted domain jscan.chrundle");
+
+  txn = await domainContract.setRecord(
+    "jscan",
+    "First official domain holder in honor of Chrundle"
+  );
+  await txn.wait();
+  console.log("Set record for jscan.chrundle");
 
   const address = await domainContract.getAddress("jscan");
-  console.log("Owner of domain:", address);
+  console.log("Owner of domain jscan:", address);
 
   const balance = await hre.ethers.provider.getBalance(domainContract.address);
   console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
@@ -22,7 +30,7 @@ const runMain = async () => {
     await main();
     process.exit(0);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     process.exit(1);
   }
 };
