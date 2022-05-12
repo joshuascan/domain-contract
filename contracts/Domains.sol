@@ -27,6 +27,18 @@ contract Domains is ERC721URIStorage {
     console.log("%s name service deployed", _tld);
   }
 
+  function price(string calldata name) public pure returns(uint) {
+    uint len = StringUtils.strlen(name);
+    require(len > 0);
+    if (len == 3) {
+      return 5 * 10**17;
+    } else if (len == 4) {
+      return 3 * 10**17;
+    } else {
+      return 1 * 10**17;
+    }
+  }
+
   function register(string calldata name) public payable {
     require(domains[name] == address(0));
 
@@ -34,12 +46,12 @@ contract Domains is ERC721URIStorage {
     require(msg.value >= _price, "Not enough Matic paid");
 
     string memory _name = string(abi.encodePacked(name, ".", tld));
-    string memory finalSvg = string(abi.encodePacked(svgPartOne, _name, svgPartTwo))
+    string memory finalSvg = string(abi.encodePacked(svgPartOne, _name, svgPartTwo));
     uint256 newRecordId = _tokenIds.current();
-    uint256 length = StringUtils.strlen(name)
+    uint256 length = StringUtils.strlen(name);
     string memory strLen = Strings.toString(length);
 
-    console.log("Registering %s.%s on the contract with tokenID %d", name, told, newRecordId);
+    console.log("Registering %s.%s on the contract with tokenID %d", name, tld, newRecordId);
 
     string memory json = Base64.encode(
       abi.encodePacked(
@@ -64,27 +76,6 @@ contract Domains is ERC721URIStorage {
     domains[name] = msg.sender;
 
     _tokenIds.increment();
-  }
-
-  function price(string calldata name) public pure returns(uint) {
-    uint len = StringUtils.strlen(name);
-    require(len > 0);
-    if (len == 3) {
-      return 5 * 10**17;
-    } else if (len == 4) {
-      return 3 * 10**17;
-    } else {
-      return 1 * 10**17;
-    }
-  }
-
-  function register(string calldata name) public payable {
-    require(domains[name] == address(0));
-    uint _price = price(name);
-    require(msg.value >= _price, "Not enough Matic paid");
-
-    domains[name] = msg.sender;
-    console.log("%s has registered a domain!", msg.sender);
   }
 
   function getAddress(string calldata name) public view returns (address) {
