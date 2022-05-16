@@ -22,7 +22,10 @@ contract Domains is ERC721URIStorage {
   mapping(string => string) public records;
   mapping(string => string) public emails;
 
-  constructor(string memory _tld) payable ERC721("Chrundle Name Service", "CNS") {
+  address payable public owner;
+
+  constructor(string memory _tld) ERC721("Chrundle Name Service", "CNS") payable {
+    owner = payable(msg.sender);
     tld = _tld;
     console.log("%s name service deployed", _tld);
   }
@@ -98,5 +101,21 @@ contract Domains is ERC721URIStorage {
 
   function getEmail(string calldata name) public view returns(string memory) {
     return emails[name];
+  }
+
+  modifier onlyOwner() {
+    require(isOwner());
+    _;
+  }
+
+  function isOwner() public view returns (bool) {
+    return msg.sender == owner;
+  }
+
+  function withdraw() public onlyOwner {
+    uint amount = address(this).balance;
+
+    (bool success, ) = msg.sender.call{value: amount}("");
+    require(success, "Failed to withdraw Matic");
   }
 }
