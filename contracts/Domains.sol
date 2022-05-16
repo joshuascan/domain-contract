@@ -21,8 +21,13 @@ contract Domains is ERC721URIStorage {
   mapping(string => address) public domains;
   mapping(string => string) public records;
   mapping(string => string) public emails;
+  mapping (uint => string) public names;
 
   address payable public owner;
+
+  error Unauthorized();
+  error AlreadyRegistered();
+  error InvalidName(string name);
 
   constructor(string memory _tld) ERC721("Chrundle Name Service", "CNS") payable {
     owner = payable(msg.sender);
@@ -43,7 +48,8 @@ contract Domains is ERC721URIStorage {
   }
 
   function register(string calldata name) public payable {
-    require(domains[name] == address(0));
+    if (domains[name] != address(0)) revert AlreadyRegistered();
+    if (!valid(name)) revert InvalidName(name);
 
     uint256 _price = price(name);
     require(msg.value >= _price, "Not enough Matic paid");
@@ -78,7 +84,13 @@ contract Domains is ERC721URIStorage {
     _setTokenURI(newRecordId, finalTokenUri);
     domains[name] = msg.sender;
 
+    names[newRecordId] = name;
+
     _tokenIds.increment();
+  }
+
+  function valid(string calldata name) public pure returns (bool) {
+    return StringUtils.strlen(name) >= 3 && StringUtils.strlen(name) <= 10;
   }
 
   function getAddress(string calldata name) public view returns (address) {
@@ -86,7 +98,7 @@ contract Domains is ERC721URIStorage {
   }
 
   function setRecord(string calldata name, string calldata record) public {
-    require(domains[name] == msg.sender);
+    if (domains[name] != msg.sender) revert Unauthorized();
     records[name] = record;
   }
 
@@ -101,6 +113,17 @@ contract Domains is ERC721URIStorage {
 
   function getEmail(string calldata name) public view returns(string memory) {
     return emails[name];
+  }
+
+  function getAllNames() public view returns (string[] memory) {
+    console.log("Getting all names from contract");
+    string[] memory allNames = new string[](_tokenIds.current());
+    for (uint i = 0; i < _tokenIds.current(); i++) {
+      allNames[i] = names[i];
+      console.log("Name for token %d is %s", i, allNames[i]);
+    }
+
+    return allNames;
   }
 
   modifier onlyOwner() {
