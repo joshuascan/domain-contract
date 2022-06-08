@@ -29,7 +29,7 @@ contract Domains is ERC721URIStorage {
   error AlreadyRegistered();
   error InvalidName(string name);
 
-  constructor(string memory _tld) ERC721("Chrundle Name Service", "CNS") payable {
+  constructor(string memory _tld) ERC721("Dum Name Service", "DNS") payable {
     owner = payable(msg.sender);
     tld = _tld;
     console.log("%s name service deployed", _tld);
@@ -60,13 +60,11 @@ contract Domains is ERC721URIStorage {
     uint256 length = StringUtils.strlen(name);
     string memory strLen = Strings.toString(length);
 
-    console.log("Registering %s.%s on the contract with tokenID %d", name, tld, newRecordId);
-
     string memory json = Base64.encode(
       abi.encodePacked(
         '{"name": "',
         _name,
-        '", "description": "A domain on the Chrundle name service", "image": "data:image/svg+xml;base64,',
+        '", "description": "A domain on the Dum name service", "image": "data:image/svg+xml;base64,',
         Base64.encode(bytes(finalSvg)),
         '","length":"',
         strLen,
@@ -75,10 +73,6 @@ contract Domains is ERC721URIStorage {
     );
 
     string memory finalTokenUri = string(abi.encodePacked("data:application/json;base64,", json));
-
-    console.log("\n---------------------------------------------------");
-    console.log("Final tokenURI\n", finalTokenUri);
-    console.log("---------------------------------------------------\n");
 
     _safeMint(msg.sender, newRecordId);
     _setTokenURI(newRecordId, finalTokenUri);
@@ -106,23 +100,11 @@ contract Domains is ERC721URIStorage {
     return records[name];
   }
 
-  function setEmailAddress(string calldata name, string calldata email) public {
-    require(domains[name] == msg.sender);
-    emails[name] = email;
-  }
-
-  function getEmail(string calldata name) public view returns(string memory) {
-    return emails[name];
-  }
-
   function getAllNames() public view returns (string[] memory) {
-    console.log("Getting all names from contract");
     string[] memory allNames = new string[](_tokenIds.current());
     for (uint i = 0; i < _tokenIds.current(); i++) {
       allNames[i] = names[i];
-      console.log("Name for token %d is %s", i, allNames[i]);
     }
-
     return allNames;
   }
 

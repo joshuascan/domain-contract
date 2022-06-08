@@ -1,6 +1,6 @@
 const main = async () => {
   const domainContractFactory = await hre.ethers.getContractFactory("Domains");
-  const domainContract = await domainContractFactory.deploy("chrundle");
+  const domainContract = await domainContractFactory.deploy("dum");
   await domainContract.deployed();
 
   console.log("Contract deployed to:", domainContract.address);
@@ -9,14 +9,11 @@ const main = async () => {
     value: hre.ethers.utils.parseEther("0.01"),
   });
   await txn.wait();
-  console.log("Minted domain jscan.chrundle");
+  console.log("Minted domain jscan.dum");
 
-  txn = await domainContract.setRecord(
-    "jscan",
-    "First official domain holder in honor of Chrundle"
-  );
+  txn = await domainContract.setRecord("jscan", "First official dum holder");
   await txn.wait();
-  console.log("Set record for jscan.chrundle");
+  console.log("Set record for jscan.dum");
 
   const address = await domainContract.getAddress("jscan");
   console.log("Owner of domain jscan:", address);
